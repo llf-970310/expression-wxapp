@@ -1,0 +1,23 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px 30px 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05);
+  padding: 10px 20px;
+}
+
+.page {
+  position: relative;
+  background-color: #f8f8f8;
+  height: 100vh;
+
+  view {
+    box-sizing: border-box;
+  }
+}
+
+.page-index {
+  padding-top: 3px;
+}
