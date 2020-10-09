@@ -34,7 +34,8 @@
                 circle
                 :onGetUserInfo="getUserInfoCallback"
                 openType="getUserInfo"
-            >微信登录</AtButton>
+                >微信登录</AtButton
+            >
         </view>
     </view>
 </template>
@@ -54,26 +55,26 @@ const list = [
         id: "new_test",
         title: "新测试",
         content: "开始一次新的表达力评测",
-        icon: iconExam
+        icon: iconExam,
     },
     {
         id: "history_score",
         title: "历史成绩",
         content: "查看历史评测成绩及相应评测报告",
-        icon: iconHistory
+        icon: iconHistory,
     },
     {
         id: "info",
         title: "个人信息",
         content: "查看并修改个人信息",
-        icon: iconInfo
-    }
+        icon: iconInfo,
+    },
 ];
 export default {
     data() {
         return {
             logo,
-            list
+            list,
         };
     },
     methods: {
@@ -111,11 +112,11 @@ export default {
                 });
             } else if (id == "history_score") {
                 this.$taro.navigateTo({
-                    url: `/pages/result/history/index`
+                    url: `/pages/result/history/index`,
                 });
             } else if (id == "info") {
                 this.$taro.navigateTo({
-                    url: `/pages/user/index`
+                    url: `/pages/user/index`,
                 });
             }
         },
@@ -140,23 +141,23 @@ export default {
             if (e.detail.userInfo) {
                 Taro.setStorageSync("userInfo", e.detail.userInfo);
                 Taro.login({
-                    success: function(res) {
+                    success: function (res) {
                         if (res.code) {
                             api.post("/api/auth/wxapp/login", {
                                 code: res.code,
-                                nick_name: e.detail.userInfo.nickName
-                            }).then(res => {
+                                nick_name: e.detail.userInfo.nickName,
+                            }).then((res) => {
                                 if (res.data.code == 0) {
                                     Taro.setStorageSync(
-                                        "cookie",
-                                        res.header["Set-Cookie"]
+                                        "Authorization",
+                                        "JWT " + res.data.data.token
                                     );
                                 }
                             });
                         } else {
                             console.log("登录失败！" + res.errMsg);
                         }
-                    }
+                    },
                 });
             } else {
                 console.log("用户拒绝授权");
@@ -166,11 +167,16 @@ export default {
         loginTmp() {
             api.post("/api/auth/login", {
                 username: "lf97310@gmail.com",
-                password: "123456"
-            }).then(res => {
-                console.log(res);
+                password: "123456",
+            }).then((res) => {
+                if (res.data.code == 0) {
+                    Taro.setStorageSync(
+                        "Authorization",
+                        "JWT " + res.data.data.token
+                    );
+                }
             });
-        }
-    }
+        },
+    },
 };
 </script>

@@ -15,36 +15,15 @@ export default {
             method: method,
             header: {
                 'content-type': contentType,
-                // 'Authorization': Taro.getStorageSync('Authorization'),
-                'Cookie': Taro.getStorageSync('cookie'),
+                'Authorization': Taro.getStorageSync('Authorization'),
+                // 'Cookie': Taro.getStorageSync('cookie'),
             },
             success(res) {
                 console.log('res', res)
-                if (res.statusCode === HTTP_STATUS.NOT_FOUND) {
-                    return console.log('请求资源不存在')
-                } else if (res.statusCode === HTTP_STATUS.BAD_GATEWAY) {
-                    return console.log('服务端出现了问题')
-                } else if (res.statusCode === HTTP_STATUS.FORBIDDEN) {
+                if (res.data.code === HTTP_STATUS.FORBIDDEN || res.data.code === HTTP_STATUS.AUTHENTICATE) {
                     Taro.setStorageSync('Authorization', '')
-                    let path = ""
-                    if (path !== 'pages/login/login') {
-                        Taro.navigateTo({
-                            url: '/pages/login/login'
-                        })
-                    }
-                    return console.log('没有权限访问')
-                } else if (res.statusCode === HTTP_STATUS.AUTHENTICATE) {
-                    Taro.setStorageSync('Authorization', '')
-                    let path = ""
-                    if (path !== 'pages/login/login') {
-                        Taro.navigateTo({
-                            url: '/pages/login/login'
-                        })
-                    }
-                    return console.log('需要鉴权')
-                } else if (res.statusCode === HTTP_STATUS.SUCCESS) {
-                    return res.data
                 }
+                return res.data
             },
             fail(e) {
                 console.log('请求接口出现问题', e)
