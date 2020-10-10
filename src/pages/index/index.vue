@@ -79,8 +79,35 @@ export default {
     methods: {
         jumpTo(id) {
             if (id == "new_test") {
-                this.$taro.navigateTo({
-                    url: `/pages/exam/index`
+                // 获取录音权限
+                Taro.getSetting({
+                    success(res) {
+                        if (!res.authSetting["scope.record"]) {
+                            Taro.authorize({
+                                scope: "scope.record",
+                                success() {
+                                    Taro.navigateTo({
+                                        url: `/pages/exam/index`
+                                    });
+                                },
+                                fail() {
+                                    Taro.showModal({
+                                        content:
+                                            "表达能力评测需要记录您的声音并进行分析，请进入设置界面开启麦克风权限",
+                                        success: function(res) {
+                                            if (res.confirm) {
+                                                Taro.openSetting();
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            Taro.navigateTo({
+                                url: `/pages/exam/index`
+                            });
+                        }
+                    }
                 });
             } else if (id == "history_score") {
                 this.$taro.navigateTo({

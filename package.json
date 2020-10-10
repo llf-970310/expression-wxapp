@@ -39,6 +39,8 @@
     "@tarojs/components": "3.0.7",
     "@tarojs/runtime": "3.0.7",
     "@tarojs/taro": "3.0.7",
+    "crypto-js": "^4.0.0",
+    "js-base64": "^3.5.2",
     "taro-ui-vue": "^1.0.0-alpha.5",
     "vue": "^2.5.0",
     "vue-template-compiler": "^2.5.0"
