@@ -1,6 +1,7 @@
 .page {
   position: relative;
   background-color: #f8f8f8;
+  height: 100vh;
 
   view {
     box-sizing: border-box;
@@ -9,18 +10,21 @@
 
 .page-index {
   padding-top: 30px;
-  padding-bottom: 100px;
 
   .question-step {
     margin: 0 auto;
-    margin-top: 40px;
+    margin-top: 80px;
     font-size: 0;
     text-align: center;
   }
 
   .btn-start {
-    margin-top: 50px;
+    margin-top: 100px;
     width: 40%;
+  }
+
+  .question-info {
+    margin-top: 60px;
   }
 }
 

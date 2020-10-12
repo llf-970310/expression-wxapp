@@ -20,7 +20,7 @@
                     <view class="at-article__section">
                         <view v-if="state == 'prepare'">
                             <view class="at-article__p">
-                                <text v-html="curQuestionTip.detail"></text>
+                                <text>{{curQuestionTip.detail}}</text>
                             </view>
                             <view class="at-article__p">{{curQuestionTip.tip}}</view>
                         </view>
@@ -189,9 +189,20 @@ export default {
         nextQuestion() {
             if (this.isLastQuestion) {
                 // 做题已结束，跳转到 report 页面
-                this.$taro.redirectTo({
-                    url: `/pages/result/report/index`
-                });
+                this.dataLoading = false;
+                setTimeout(() => {
+                    Taro.showToast({
+                        title: "评测已结束，报告生成中...",
+                        icon: "none",
+                        duration: 2000
+                    });
+                }, 500);
+
+                setTimeout(() => {
+                    this.$taro.redirectTo({
+                        url: `/pages/result/report/index`
+                    });
+                }, 2000);
             } else {
                 // 继续做题
                 this.dataLoading = true;
@@ -205,7 +216,10 @@ export default {
                         this.curQuestionType = data.questionType;
                         this.curQuestionDbId = data.questionDbId;
                         this.curQuestionRawText = data.questionContent;
-                        this.curQuestionTip.detail = data.questionInfo.detail;
+                        this.curQuestionTip.detail = data.questionInfo.detail.replace(
+                            /<br>/g,
+                            "\n"
+                        );
                         this.curQuestionTip.tip = data.questionInfo.tip;
                         this.curQuestionPreparationTime = data.readLimitTime;
                         this.curQuestionAnswerTime = data.questionLimitTime;
@@ -268,7 +282,7 @@ export default {
                                 console.error(err);
                                 _this.nextQuestion();
                             }
-                        })
+                        });
                 });
             }
         }
