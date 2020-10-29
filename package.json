@@ -40,6 +40,7 @@
     "@tarojs/runtime": "3.0.7",
     "@tarojs/taro": "3.0.7",
     "crypto-js": "^4.0.0",
+    "echarts-taro3-vue": "^1.0.5",
     "js-base64": "^3.5.2",
     "taro-ui-vue": "^1.0.0-alpha.5",
     "vue": "^2.5.0",

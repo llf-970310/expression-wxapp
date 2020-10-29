@@ -24,9 +24,9 @@
             </view>
         </view>
 
-        <view style="width: 50%; margin: 0 auto; margin-top: 50px">
+        <!-- <view style="width: 50%; margin: 0 auto; margin-top: 50px">
             <AtButton type="primary" circle :onClick="loginTmp">登录</AtButton>
-        </view>
+        </view> -->
 
         <view style="width: 50%; margin: 0 auto; margin-top: 50px">
             <AtButton
