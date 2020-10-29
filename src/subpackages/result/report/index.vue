@@ -218,7 +218,7 @@ export default {
 
                     setTimeout(() => {
                         this.$taro.redirectTo({
-                            url: `/pages/result/history/index`
+                            url: `/subpackages/result/history/index`
                         });
                     }, 1000);
                 }

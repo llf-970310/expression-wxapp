@@ -152,6 +152,11 @@ export default {
                                         "Authorization",
                                         "JWT " + res.data.data.token
                                     );
+                                    Taro.showToast({
+                                        title: "登录成功",
+                                        icon: "none",
+                                        duration: 1500
+                                    });
                                 }
                             });
                         } else {

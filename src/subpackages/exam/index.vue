@@ -200,7 +200,7 @@ export default {
 
                 setTimeout(() => {
                     this.$taro.redirectTo({
-                        url: `/pages/result/report/index`
+                        url: `/subpackages/result/report/index`
                     });
                 }, 2000);
             } else {
