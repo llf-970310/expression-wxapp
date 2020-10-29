@@ -31,7 +31,7 @@
                 </view>
             </view>
             <view class="countdown" v-if="state == 'startAnswer'">
-                <text>剩余时间: </text>
+                <text>剩余时间:</text>
                 <AtCountdown
                     :seconds="curQuestionAnswerTime"
                     :onTimeUp="onTimeUp"
@@ -115,7 +115,7 @@ export default {
         };
     },
     mounted() {
-        this.initExam("5ec67fb360e1ec808ee2ad47");
+        this.checkUnfinishedExam();
     },
     methods: {
         onChange(stateName, current) {
@@ -161,6 +161,41 @@ export default {
             setTimeout(() => {
                 this.nextStep();
             }, 1000);
+        },
+
+        checkUnfinishedExam() {
+            const _this = this;
+
+            api.get("/api/exam/left").then(res => {
+                if (res.data.code == 0) {
+                    this.initExam("5ec67fb360e1ec808ee2ad47");
+                } else if (res.data.code === 2) {
+                    Taro.showModal({
+                        // title: "提示",
+                        content:
+                            "监测到您有正在进行的测试，请问是否需要继续测试？",
+                        cancelText: "重新测试",
+                        success: function(select) {
+                            if (select.confirm) {
+                                const questionData = res.data.data;
+                                _this.curQuestionIndex =
+                                    parseInt(questionData["next_q_num"]) - 1;
+                                _this.nextQuestion();
+                            } else if (select.cancel) {
+                                _this.initExam("5ec67fb360e1ec808ee2ad47");
+                            }
+                        }
+                    });
+                } else {
+                    this.toastText = res.data.msg;
+                    this.toastShow = true;
+                    setTimeout(() => {
+                        this.$taro.redirectTo({
+                            url: `/pages/index/index`
+                        });
+                    }, 1000);
+                }
+            });
         },
 
         initExam(paperTemplateID) {
@@ -260,7 +295,9 @@ export default {
                 uploadSoundToBOS(tempFilePath, uploadUrl, function() {
                     // 上传成功调用，告知服务器进行分析
                     api.post(
-                        "/api/exam/" + _this.curQuestionIndex + "/upload-success"
+                        "/api/exam/" +
+                            _this.curQuestionIndex +
+                            "/upload-success"
                     )
                         .then(res => {
                             console.log("已通知服务器上传成功");
