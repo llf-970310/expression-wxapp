@@ -1,3 +1,5 @@
+const path = require('path')
+
 const config = {
     projectName: 'expression-wx',
     date: '2020-8-13',
@@ -10,6 +12,9 @@ const config = {
     sourceRoot: 'src',
     outputRoot: 'dist',
     plugins: [],
+    alias: {
+        '@/util': path.resolve(__dirname, '..', 'src/util'),
+    },
     defineConstants: {
     },
     copy: {
