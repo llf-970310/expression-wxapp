@@ -142,7 +142,7 @@
 
 <script>
 import "./index.scss";
-import api from "../../../util/api.js";
+import api from "@/util/api.js";
 import { getCurrentInstance } from "@tarojs/taro";
 
 const testId = -1;

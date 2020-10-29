@@ -49,7 +49,7 @@
 
 <script>
 import "./index.scss";
-import api from "../../../util/api.js";
+import api from "@/util/api.js";
 
 import Taro from "@tarojs/taro";
 import { EChart } from "echarts-taro3-vue";
@@ -71,7 +71,7 @@ export default {
     methods: {
         handleClick(id) {
             this.$taro.navigateTo({
-                url: `/pages/result/report/index?id=` + id
+                url: `/subpackages/result/report/index?id=` + id
             });
         },
 

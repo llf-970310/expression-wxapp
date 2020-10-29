@@ -52,9 +52,9 @@
 
 <script>
 import "./index.scss";
-import api from "../../util/api.js";
+import api from "@/util/api.js";
 import Taro from "@tarojs/taro";
-import { uploadSoundToBOS } from "../../util/bos.js";
+import { uploadSoundToBOS } from "@/util/bos.js";
 
 const stepItems = [
     { title: "阅读要求" },

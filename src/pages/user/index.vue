@@ -62,7 +62,7 @@ export default {
     methods: {
         navigateToHistory() {
             this.$taro.navigateTo({
-                url: `/pages/result/history/index`
+                url: `/subpackages/result/history/index`
             });
         },
 

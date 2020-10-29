@@ -88,7 +88,7 @@ export default {
                                 scope: "scope.record",
                                 success() {
                                     Taro.navigateTo({
-                                        url: `/pages/exam/index`
+                                        url: `/subpackages/exam/index`
                                     });
                                 },
                                 fail() {
@@ -105,14 +105,14 @@ export default {
                             });
                         } else {
                             Taro.navigateTo({
-                                url: `/pages/exam/index`
+                                url: `/subpackages/exam/index`
                             });
                         }
                     }
                 });
             } else if (id == "history_score") {
                 this.$taro.navigateTo({
-                    url: `/pages/result/history/index`,
+                    url: `/subpackages/result/history/index`,
                 });
             } else if (id == "info") {
                 this.$taro.navigateTo({
