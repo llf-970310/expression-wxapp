@@ -88,7 +88,7 @@ export default {
                                 scope: "scope.record",
                                 success() {
                                     Taro.navigateTo({
-                                        url: `/subpackages/exam/index`
+                                        url: `/subpackages/exam/audio-test/audio-test`
                                     });
                                 },
                                 fail() {
@@ -105,7 +105,7 @@ export default {
                             });
                         } else {
                             Taro.navigateTo({
-                                url: `/subpackages/exam/index`
+                                url: `/subpackages/exam/audio-test/audio-test`
                             });
                         }
                     }

@@ -27,6 +27,7 @@ export default {
       "name": "exam",
       "pages": [
         'index',
+        'audio-test/audio-test',
       ]
     }
   ]
