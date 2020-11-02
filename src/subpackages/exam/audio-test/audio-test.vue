@@ -12,10 +12,49 @@
         <!-- 结果 -->
         <view v-if="state == 'showResult'">
             <view v-if="resultLoading">
-                <AtActivityIndicator content="结果分析中..."></AtActivityIndicator>
+                <AtActivityIndicator content="音频分析中..." mode="center" size="50"></AtActivityIndicator>
             </view>
             <view v-else>
-                <text>{{analysisResult.msg}}</text>
+                <view style="margin-top: 50px;">
+                    <view class="at-article__p" style="text-align: center">{{analysisResult.msg}}</view>
+                </view>
+
+                <view class="module-list">
+                    <view class="module-list__item">
+                        <view class="module-list__info">
+                            <view class="title">能否识别</view>
+                        </view>
+
+                        <view
+                            v-if="analysisResult.canRcg"
+                            class="module-list__arrow"
+                            style="background: #75D701;"
+                        >
+                            <text class="at-icon at-icon-check" />
+                        </view>
+                        <view v-else class="module-list__arrow" style="background: #EC6A5C;">
+                            <text class="at-icon at-icon-close" />
+                        </view>
+                    </view>
+
+                    <view class="module-list__item">
+                        <view class="module-list__info">
+                            <view class="title">声音质量</view>
+                        </view>
+
+                        <view
+                            v-if="analysisResult.qualityIsOk"
+                            class="module-list__arrow"
+                            style="background: #75D701;"
+                        >
+                            <text class="at-icon at-icon-check" />
+                        </view>
+                        <view v-else class="module-list__arrow" style="background: #EC6A5C;">
+                            <text class="at-icon at-icon-close" />
+                        </view>
+                    </view>
+                </view>
+
                 <AtButton
                     v-if="!analysisResult.canRcg || !analysisResult.qualityIsOk"
                     type="primary"
