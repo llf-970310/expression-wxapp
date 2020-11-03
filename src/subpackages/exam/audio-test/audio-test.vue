@@ -60,8 +60,9 @@
                     type="primary"
                     circle
                     class="btn-start"
+                    :onClick="reTest"
                 >重新测试</AtButton>
-                <AtButton v-else type="primary" circle class="btn-start">开始评测</AtButton>
+                <AtButton v-else type="primary" circle class="btn-start" :onClick="jumpToExam">开始评测</AtButton>
             </view>
         </view>
 
@@ -183,6 +184,19 @@ export default {
     methods: {
         onChange(stateName, current) {
             this[stateName] = current;
+        },
+
+        reTest() {
+            this.resultLoading = true;
+            this.stepCurrent = 0;
+            this.state = "prepare";
+            this.initAudioTest();
+        },
+
+        jumpToExam() {
+            Taro.redirectTo({
+                url: `/subpackages/exam/index`
+            });
         },
 
         nextStep() {
