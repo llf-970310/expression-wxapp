@@ -138,10 +138,6 @@ recorderManager.onStart(() => {
 recorderManager.onPause(() => {
     console.log("recorder pause");
 });
-recorderManager.onStop(res => {
-    console.log("recorder stop", res);
-    tempFilePath = res.tempFilePath;
-});
 
 export default {
     data() {
@@ -168,7 +164,7 @@ export default {
 
             // 重试相关的参数
             retryCount: 0,
-            maxRetry: 5,
+            maxRetry: 10,
 
             // 预测试之后的结果展示
             analysisResult: {
@@ -179,6 +175,10 @@ export default {
         };
     },
     mounted() {
+        recorderManager.onStop(res => {
+            console.log("[audio_test] recorder stop", res);
+            tempFilePath = res.tempFilePath;
+        });
         this.initAudioTest();
     },
     methods: {

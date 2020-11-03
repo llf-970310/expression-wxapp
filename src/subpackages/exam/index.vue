@@ -73,16 +73,6 @@ const options = {
     format: "wav"
 };
 var tempFilePath = "";
-recorderManager.onStart(() => {
-    console.log("recorder start");
-});
-recorderManager.onPause(() => {
-    console.log("recorder pause");
-});
-recorderManager.onStop(res => {
-    console.log("recorder stop", res);
-    tempFilePath = res.tempFilePath;
-});
 
 export default {
     data() {
@@ -115,6 +105,12 @@ export default {
         };
     },
     mounted() {
+        // recorderManager为全局唯一，所以在mounted中设置onStop()函数，
+        // 否则会和预测试页面的产生混乱，导致tempFilePath变量取不到值
+        recorderManager.onStop(res => {
+            console.log("[exam] recorder stop", res);
+            tempFilePath = res.tempFilePath;
+        });
         this.checkUnfinishedExam();
     },
     methods: {
@@ -264,7 +260,13 @@ export default {
                     } else if (code === 4000) {
                         console.error("请求参数错误");
                     } else if (code === 4003) {
-                        console.error("考试时间到");
+                        this.toastText = "考试时间到";
+                        this.toastShow = true;
+                        setTimeout(() => {
+                            this.$taro.redirectTo({
+                                url: `/pages/index/index`
+                            });
+                        }, 1000);
                     } else if (code === 5100) {
                         // 测试已完成
                         this.hasFinishExercise = true;
