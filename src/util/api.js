@@ -27,6 +27,13 @@ export default {
             },
             fail(e) {
                 console.log('请求接口出现问题', e)
+                setTimeout(() => {
+                    Taro.showToast({
+                        title: "网络请求异常，请稍后重试",
+                        icon: "none",
+                        duration: 1500
+                    });
+                }, 3000);
             }
         }
         return Taro.request(option)
