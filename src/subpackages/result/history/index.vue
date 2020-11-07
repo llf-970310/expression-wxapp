@@ -11,8 +11,8 @@
             <view class="panel">
                 <view class="panel__title">近五次测试变化趋势</view>
                 <view class="panel__content">
-                    <view class="chart">
-                        <e-chart ref="chart" canvas-id="total-chart-canvas" />
+                    <view class="chart" style="width: 100%;height: 50vh">
+                        <ec-canvas ref="chart" canvas-id="chart-canvas" :ec="ec" />
                     </view>
                 </view>
             </view>
@@ -49,10 +49,12 @@
 
 <script>
 import "./index.scss";
-import api from "@/util/api.js";
 
+import api from "@/util/api.js";
 import Taro from "@tarojs/taro";
-import { EChart } from "echarts-taro3-vue";
+
+import EcCanvas from "@/components/ec-canvas";
+import * as echarts from "@/components/ec-canvas/echarts";
 
 export default {
     data() {
@@ -61,13 +63,20 @@ export default {
             paperTemplateMap: {},
             toastText: "",
             toastShow: false,
-            dataLoading: true
+            dataLoading: true,
+
+            ec: {
+                lazyLoad: true
+            }
         };
     },
     mounted() {
         this.getPaperTemplate();
+        this.Chart = this.$refs.chart;
     },
-    components: { EChart },
+    components: {
+        EcCanvas
+    },
     methods: {
         handleClick(id) {
             this.$taro.navigateTo({
@@ -287,8 +296,15 @@ export default {
                 ]
             };
 
-            Taro.nextTick(() => {
-                this.$refs.chart.refresh(chartOption);
+            this.Chart.init((canvas, width, height, canvasDpr) => {
+                const chart = echarts.init(canvas, null, {
+                    width: width,
+                    height: height,
+                    devicePixelRatio: canvasDpr
+                });
+                canvas.setChart(chart);
+                chart.setOption(chartOption);
+                return chart;
             });
         }
     }
