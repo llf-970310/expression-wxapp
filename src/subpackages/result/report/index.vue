@@ -1,8 +1,14 @@
 <template>
     <view class="page page-index">
+        <AtNoticebar icon="volume-plus">点击标签，查看对应维度的分析报告</AtNoticebar>
         <DocsHeader title="评测报告" />
+
         <AtToast :text="toastText" hasMask :isOpened="toastShow" status="error"></AtToast>
         <AtToast text="正在加载..." hasMask :isOpened="dataLoading" status="loading"></AtToast>
+
+        <view class="chart" style="width: 100%;height: 40vh">
+            <ec-canvas ref="chart" canvas-id="radar-canvas" :ec="ec" />
+        </view>
 
         <view class="content">
             <view class="item_view">
@@ -40,8 +46,8 @@
         </view>
 
         <view class="doc-body">
-            <view class="panel">
-                <view class="panel__title">01 音质</view>
+            <view class="panel" v-if="scoreSelected == '音质'">
+                <view class="panel__title">音质</view>
                 <view class="panel__content">
                     <view class="at-article">
                         <view class="at-article__p">
@@ -78,8 +84,8 @@
                     </view>
                 </view>
             </view>
-            <view class="panel">
-                <view class="panel__title">02 主旨</view>
+            <view class="panel" v-else-if="scoreSelected == '主旨'">
+                <view class="panel__title">主旨</view>
                 <view class="panel__content">
                     <view class="at-article">
                         <!-- <view class="at-article__h2">这是二级标题</view> -->
@@ -93,8 +99,8 @@
                     </view>
                 </view>
             </view>
-            <view class="panel">
-                <view class="panel__title">03 细节</view>
+            <view class="panel" v-else-if="scoreSelected == '细节'">
+                <view class="panel__title">细节</view>
                 <view class="panel__content">
                     <view class="at-article">
                         <!-- <view class="at-article__h2">这是二级标题</view> -->
@@ -107,8 +113,8 @@
                     </view>
                 </view>
             </view>
-            <view class="panel">
-                <view class="panel__title">04 结构</view>
+            <view class="panel" v-else-if="scoreSelected == '结构'">
+                <view class="panel__title">结构</view>
                 <view class="panel__content">
                     <view class="at-article">
                         <!-- <view class="at-article__h2">这是二级标题</view> -->
@@ -121,8 +127,8 @@
                     <AtTimeline class="timeline" :items="structureItems"></AtTimeline>
                 </view>
             </view>
-            <view class="panel">
-                <view class="panel__title">05 逻辑</view>
+            <view class="panel" v-else-if="scoreSelected == '逻辑'">
+                <view class="panel__title">逻辑</view>
                 <view class="panel__content">
                     <view class="at-article">
                         <!-- <view class="at-article__h2">这是二级标题</view> -->
@@ -136,6 +142,19 @@
                     <AtTimeline class="timeline" :items="logicItems"></AtTimeline>
                 </view>
             </view>
+            <view class="panel" v-else>
+                <view class="at-article">
+                    <view class="at-article__p">表达力是一个人生活在社会中所必须的基础能力。它会对一个人的人际关系、情感质量、薪酬和职位产生巨大影响。</view>
+                    <view class="at-article__p">
+                        在这样一个媒体碎片化、传播渠道极其丰富的时代，好的表达离对个人的加成，远超以往任何时代，可能一次好的表达，就能让你获得关注和瞩目，提升社会会地位，
+                        而一次糟糕的表达有可能会断送一个人的职业生涯，或者在社交中所积累的良好形象。
+                    </view>
+                    <view class="at-article__p">
+                        帮助你准确评判自我的表达能力，精准定位自我在人群中的表达水平，是这个测试的目的。
+                        有了准确的表达能力图谱，可以帮助你有的放矢地进行针对性地提高，提升自己的竞争力。
+                    </view>
+                </view>
+            </view>
         </view>
     </view>
 </template>
@@ -143,7 +162,12 @@
 <script>
 import "./index.scss";
 import api from "@/util/api.js";
+
+import Taro from "@tarojs/taro";
 import { getCurrentInstance } from "@tarojs/taro";
+
+import EcCanvas from "@/components/ec-canvas";
+import * as echarts from "@/components/ec-canvas/echarts";
 
 const testId = -1;
 
@@ -171,7 +195,13 @@ export default {
             ],
 
             structureItems: [],
-            logicItems: []
+            logicItems: [],
+
+            ec: {
+                lazyLoad: true
+            },
+
+            scoreSelected: ""
         };
     },
     mounted() {
@@ -179,6 +209,11 @@ export default {
 
         if (this.testId == null) this.getCurrentExamResult();
         else this.getHistoryExamResult(this.testId);
+
+        this.Chart = this.$refs.chart;
+    },
+    components: {
+        EcCanvas
     },
     filters: {
         TwoDecimal: function(value) {
@@ -208,6 +243,7 @@ export default {
                     this.report = data.data.report;
                     this.score = data.data.data;
                     this.dataFormat();
+                    this.getChart(this.score);
                 } else {
                     this.toastText = data.msg;
                     this.toastShow = true;
@@ -232,6 +268,82 @@ export default {
 
             this.report.逻辑.forEach(element => {
                 this.logicItems.push({ title: element });
+            });
+        },
+
+        getChart(scoreInfo) {
+            let chartOption = {
+                tooltip: {},
+                radar: {
+                    // shape: 'circle',
+                    name: {
+                        textStyle: {
+                            color: "#fff",
+                            backgroundColor: "#999",
+                            borderRadius: 3,
+                            padding: [3, 5]
+                        }
+                    },
+                    indicator: [
+                        { name: "主旨", max: 100 },
+                        { name: "细节", max: 100 },
+                        { name: "音质", max: 100 },
+                        { name: "结构", max: 100 },
+                        { name: "逻辑", max: 100 }
+                    ],
+                    triggerEvent: true
+                },
+                series: [
+                    {
+                        name: "各维度得分情况",
+                        type: "radar",
+                        symbolSize: 6,
+                        data: [
+                            {
+                                value: [
+                                    scoreInfo["主旨"],
+                                    scoreInfo["细节"],
+                                    scoreInfo["音质"],
+                                    scoreInfo["结构"],
+                                    scoreInfo["逻辑"]
+                                ]
+                            }
+                        ],
+                        itemStyle: {
+                            color: "#60acfc",
+                            shadowColor: "#60acfc",
+                            shadowBlur: 10
+                        },
+                        lineStyle: {
+                            shadowColor: "#60acfc",
+                            shadowOffsetX: 0,
+                            shadowOffsetY: 0,
+                            opacity: 1,
+                            shadowBlur: 8,
+                            type: "solid",
+                            width: 2
+                        },
+                        areaStyle: {
+                            color: "rgba(96, 172, 252, 0.5)"
+                        }
+                    }
+                ]
+            };
+
+            this.Chart.init((canvas, width, height, canvasDpr) => {
+                const chart = echarts.init(canvas, null, {
+                    width: width,
+                    height: height,
+                    devicePixelRatio: canvasDpr
+                });
+                chart.on("click", params => {
+                    if (params.componentType == "radar") {
+                        this.scoreSelected = params.name;
+                    }
+                });
+                canvas.setChart(chart);
+                chart.setOption(chartOption);
+                return chart;
             });
         }
     }

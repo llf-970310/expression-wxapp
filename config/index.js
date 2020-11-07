@@ -14,6 +14,7 @@ const config = {
     plugins: [],
     alias: {
         '@/util': path.resolve(__dirname, '..', 'src/util'),
+        '@': path.resolve(__dirname, '..', 'src'),
     },
     defineConstants: {
     },
