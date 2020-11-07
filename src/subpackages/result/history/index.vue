@@ -53,8 +53,8 @@ import "./index.scss";
 import api from "@/util/api.js";
 import Taro from "@tarojs/taro";
 
-import EcCanvas from "@/components/ec-canvas";
-import * as echarts from "@/components/ec-canvas/echarts";
+import EcCanvas from "../components/ec-canvas";
+import * as echarts from "../components/ec-canvas/echarts";
 
 export default {
     data() {

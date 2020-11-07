@@ -26,6 +26,29 @@ const config = {
     },
     framework: 'vue',
     mini: {
+        webpackChain(chain, webpack) {
+            // chain.plugin('analyzer')
+            //     .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin, []);
+            chain.merge({
+                optimization: {
+                    splitChunks: {
+                        cacheGroups: {
+                            echarts: {
+                                name: "subpackages/result/components/echarts",  // 打包后的文件名
+                                priority: 50,
+                                test(module) {
+                                    return /subpackages[\\/]result[\\/]components[\\/]ec-canvas/.test(module.resource);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        addChunkPages(pages, pagesNames) {
+            pages.set('subpackages/result/history/index', ['subpackages/result/components/echarts'])
+            pages.set('subpackages/result/report/index', ['subpackages/result/components/echarts'])
+        },
         postcss: {
             pxtransform: {
                 enable: true,
