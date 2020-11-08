@@ -41,9 +41,9 @@
                     </view>
                 </view>
             </view>
-        </view>
 
-        <AtDivider style="width: 40%; margin: 0 auto;" />
+            <AtDivider style="width: 40%; margin: 0 auto;" />
+        </view>
     </view>
 </template>
 
