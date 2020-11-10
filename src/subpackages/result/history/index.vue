@@ -22,21 +22,45 @@
                 <view class="panel__content">
                     <view class="content" v-for="(item, index) in historyScoreList" :key="index">
                         <view class="panel__content no-padding">
-                            <view class="example-item">
-                                <AtCard
-                                    :title="paperTemplateMap[item.paper_tpl_id] != null ? paperTemplateMap[item.paper_tpl_id] : '经典表达力评测'"
-                                    :extra="'总分：' + item.score_info.total"
-                                    :note="'测试时间：' + item.test_start_time"
-                                    :onClick="handleClick.bind(this, item.test_id)"
-                                >
-                                    主旨：{{ item.score_info.主旨 }}
-                                    细节：{{ item.score_info.细节 }}
-                                    音质：{{ item.score_info.音质 }}
+                            <AtCard
+                                :title="paperTemplateMap[item.paper_tpl_id] != null ? paperTemplateMap[item.paper_tpl_id] : '经典表达力评测'"
+                                :extra="'总分：' + item.score_info.total"
+                                :note="'测试时间：' + item.test_start_time"
+                                :onClick="handleClick.bind(this, item.test_id)"
+                            >
+                                <view class="item_view">
+                                    <view class="item">
+                                        <view class="title">{{ item.score_info.音质 }}</view>
+                                        <view class="desc">音质</view>
+                                    </view>
+                                    <view class="line" />
+                                    <view class="item">
+                                        <view class="title">{{ item.score_info.主旨 }}</view>
+                                        <view class="desc">主旨</view>
+                                    </view>
+                                    <view class="line" />
+                                    <view class="item">
+                                        <view class="title">{{ item.score_info.细节 }}</view>
+                                        <view class="desc">细节</view>
+                                    </view>
+                                    <view class="line" />
+                                    <view class="item">
+                                        <view class="title">{{ item.score_info.结构 }}</view>
+                                        <view class="desc">结构</view>
+                                    </view>
+                                    <view class="line" />
+                                    <view class="item">
+                                        <view class="title">{{ item.score_info.逻辑 }}</view>
+                                        <view class="desc">逻辑</view>
+                                    </view>
+                                </view>
+                                <!-- 主旨：
+                                    细节：
+                                    音质：
                                     <text>{{'\n'}}</text>
                                     结构：{{ item.score_info.结构 }}
-                                    逻辑：{{ item.score_info.逻辑 }}
-                                </AtCard>
-                            </view>
+                                逻辑：{{ item.score_info.逻辑 }}-->
+                            </AtCard>
                         </view>
                     </view>
                 </view>
