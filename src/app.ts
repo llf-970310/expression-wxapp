@@ -33,8 +33,8 @@ const App = new Vue({
                                 }).then(res => {
                                     if (res.data.code == 0) {
                                         Taro.setStorageSync(
-                                            "cookie",
-                                            res.header["Set-Cookie"]
+                                            "Authorization",
+                                            "JWT " + res.data.data.token
                                         );
                                     }
                                 });
