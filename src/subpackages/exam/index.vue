@@ -18,14 +18,25 @@
                 </view>
                 <view class="at-article__content">
                     <view class="at-article__section">
+                        <!-- 阅读题目要求 -->
                         <view v-if="state == 'prepare'">
                             <view class="at-article__p">
                                 <text>{{curQuestionTip.detail}}</text>
                             </view>
                             <view class="at-article__p">{{curQuestionTip.tip}}</view>
                         </view>
-                        <view v-else>
+                        <!-- 阅读文本 -->
+                        <view v-else-if="state == 'readQuestion'">
                             <view class="at-article__p">{{curQuestionRawText}}</view>
+                        </view>
+                        <!-- 开始答题且为阅读题或表达题 -> 显示题目文本
+                             开始答题且为转述题 -> 不显示题目文本 
+                        -->
+                        <view v-else-if="curQuestionType == 1 || curQuestionType == 3">
+                            <view class="at-article__p">{{curQuestionRawText}}</view>
+                        </view>
+                        <view v-else>
+                            <view class="at-article__p">请用自己的语言转述前一阶段阅读的文本</view>
                         </view>
                     </view>
                 </view>
