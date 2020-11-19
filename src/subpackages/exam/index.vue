@@ -1,5 +1,14 @@
 <template>
     <view class="page page-index">
+        <view class="total-countdown" v-if="exerciseLeftTime != null">
+            <text>评测剩余时间:</text>
+            <AtCountdown
+                :seconds="exerciseLeftTime"
+                :onTimeUp="onTimeUp.bind(this, 2)"
+                :isShowHour="false"
+            />
+        </view>
+
         <AtSteps
             :items="stepItems"
             :current="stepCurrent"
@@ -42,10 +51,10 @@
                 </view>
             </view>
             <view class="countdown" v-if="state == 'startAnswer'">
-                <text>剩余时间:</text>
+                <text>答题剩余时间:</text>
                 <AtCountdown
                     :seconds="curQuestionAnswerTime"
-                    :onTimeUp="onTimeUp"
+                    :onTimeUp="onTimeUp.bind(this, 1)"
                     :isShowHour="false"
                 />
             </view>
@@ -96,6 +105,10 @@ export default {
             dataLoading: false,
             toastText: "",
             toastShow: false,
+
+            // 本次评测的相关属性
+            exerciseTime: null,
+            exerciseLeftTime: null,
             isLastQuestion: false,
             hasFinishExercise: false,
 
@@ -159,15 +172,24 @@ export default {
             this.state = stateList[this.stepCurrent];
         },
 
-        onTimeUp() {
+        // 1: 该题目时间到  2：评测时间到
+        onTimeUp(type) {
             Taro.showToast({
                 title: "答题时间到",
                 icon: "none",
                 duration: 1000
             });
-            setTimeout(() => {
-                this.nextStep();
-            }, 1000);
+            if (type == 1) {
+                setTimeout(() => {
+                    this.nextStep();
+                }, 1000);
+            } else if (type == 2) {
+                setTimeout(() => {
+                    Taro.redirectTo({
+                        url: `/subpackages/result/report/index`
+                    });
+                }, 1000);
+            }
         },
 
         checkUnfinishedExam() {
