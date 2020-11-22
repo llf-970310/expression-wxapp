@@ -20,10 +20,18 @@
 
         <view class="question-info">
             <view class="at-article">
-                <view class="at-article__h1">
-                    <text v-if="curQuestionType == 1">朗读题</text>
-                    <text v-else-if="curQuestionType == 3">表达题</text>
-                    <text v-else>转述题</text>
+                <view class="at-article__h1 at-row">
+                    <view class="at-col">
+                        <text v-if="curQuestionType == 1">朗读题</text>
+                        <text v-else-if="curQuestionType == 3">表达题</text>
+                        <text v-else>转述题</text>
+                    </view>
+                    <view class="at-col" v-if="state != 'prepare'">
+                        <AtButton class="like-button" size="small" :onClick="onClickLikeButton">
+                            <AtIcon value="heart-2" size="24" color="#EE7785" v-if="isLike"></AtIcon>
+                            <AtIcon value="heart" size="24" v-else></AtIcon>
+                        </AtButton>
+                    </view>
                 </view>
                 <view class="at-article__content">
                     <view class="at-article__section">
@@ -94,6 +102,17 @@ const options = {
 };
 var tempFilePath = "";
 
+const FeedbackActions = {
+    like: ["/like", "post"],
+    up: ["/up", "post"],
+    down: ["/down", "post"],
+    cancelLike: ["/like", "delete"],
+    cancelUp: ["/up", "delete"],
+    cancelDown: ["/down", "delete"],
+    upToDown: ["/up2down", "post"],
+    downToUp: ["/down2up", "post"]
+};
+
 export default {
     data() {
         return {
@@ -113,6 +132,7 @@ export default {
             hasFinishExercise: false,
 
             // 当前题目的相关属性
+            curQuestionDbId: "",
             curQuestionIndex: 0,
             curQuestionType: 1,
             curQuestionRawText: "",
@@ -122,6 +142,7 @@ export default {
             },
             curQuestionPreparationTime: 0,
             curQuestionAnswerTime: 0,
+            isLike: false,
 
             // 重试相关的参数
             retryCount: 0,
@@ -270,6 +291,7 @@ export default {
             } else {
                 // 继续做题
                 this.dataLoading = true;
+                this.isLike = false;
                 api.get(
                     "/api/exam/" + this.curQuestionIndex + "/next-question"
                 ).then(res => {
@@ -355,6 +377,44 @@ export default {
                                 _this.nextQuestion();
                             }
                         });
+                });
+            }
+        },
+
+        onClickLikeButton() {
+            if (this.isLike) {
+                this.isLike = false;
+                this.feedback(FeedbackActions.cancelLike, this.curQuestionDbId);
+            } else {
+                this.isLike = true;
+                this.feedback(FeedbackActions.like, this.curQuestionDbId);
+            }
+        },
+
+        feedback(feedbackAction, qDbId) {
+            let [action, method] = feedbackAction;
+            let url = "/api/questions/" + qDbId + action;
+            if (method === "post") {
+                api.post(url).then(res => {
+                    if (res.data.code != 0) {
+                        Taro.showToast({
+                            title: "标记失败",
+                            icon: "none",
+                            duration: 1500
+                        });
+                        console.log(res.data.msg);
+                    }
+                });
+            } else if (method === "delete") {
+                api.delete(url).then(res => {
+                    if (res.data.code != 0) {
+                        Taro.showToast({
+                            title: "标记失败",
+                            icon: "none",
+                            duration: 1500
+                        });
+                        console.log(res.data.msg);
+                    }
                 });
             }
         }
