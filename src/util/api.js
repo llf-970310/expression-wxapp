@@ -9,8 +9,7 @@ export default {
         let contentType = 'application/x-www-form-urlencoded'
         contentType = params.contentType || contentType
         const option = {
-            // url: url.indexOf('http') !== -1 ? url : config.requestUrl + url,
-            url: url,
+            url: url.indexOf('http') !== -1 ? url : config.requestUrl + url,
             data: data,
             method: method,
             header: {

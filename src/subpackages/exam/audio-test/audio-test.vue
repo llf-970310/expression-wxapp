@@ -152,8 +152,6 @@ export default {
             toastText: "",
             toastShow: false,
 
-            // 预测试的问题ID
-            preparationId: "",
             // 预测试的问题原文
             questionRawText: "",
             // 预测试的问题提示
@@ -161,6 +159,10 @@ export default {
             questionTip: "",
             // 预测试的问题时间限制，以秒为单位
             questionAnswerTime: 0,
+            // 文件上传位置：bos or local
+            uploadLocation: "",
+            // 文件上传 url
+            uploadUrl: "",
 
             // 重试相关的参数
             retryCount: 0,
@@ -209,18 +211,25 @@ export default {
             if (this.stepCurrent == 2) {
                 recorderManager.stop();
                 // 处理录音文件
-                let params = {
-                    testId: this.preparationId
-                };
-                api.get("/api/exam/pretest-wav-url", params)
+                api.get("/api/exam/pretest-wav-url")
                     .then(res => {
-                        let uploadLocation = res.data.data.fileLocation;
-                        let uploadUrl = res.data.data.url;
-                        this.uploadRecording(
-                            uploadLocation,
-                            uploadUrl,
-                            tempFilePath
-                        );
+                        if (res.data.code == 0) {
+                            this.uploadLocation = res.data.data.fileLocation;
+                            this.uploadUrl = res.data.data.url;
+                            this.uploadRecording(
+                                this.uploadLocation,
+                                this.uploadUrl,
+                                tempFilePath
+                            );
+                        } else {
+                            this.toastText = res.data.msg;
+                            this.toastShow = true;
+                            setTimeout(() => {
+                                this.$taro.redirectTo({
+                                    url: `/pages/index/index`
+                                });
+                            }, 1000);
+                        }
                     })
                     .catch(err => {
                         console.log("err: ", err);
@@ -246,7 +255,6 @@ export default {
             this.dataLoading = true;
             api.get("/api/exam/pretest-wav-info").then(res => {
                 if (res.data.code == 0) {
-                    this.preparationId = res.data.data.testId;
                     this.questionRawText = res.data.data.questionContent;
                     this.questionTipDetail = res.data.data.questionInfo.detail.replace(
                         /<br>/g,
@@ -284,7 +292,8 @@ export default {
                 uploadSoundToBOS(tempFilePath, uploadUrl, function() {
                     // 上传成功调用，告知服务器进行分析
                     let params = {
-                        testId: _this.preparationId
+                        filePath: _this.uploadUrl,
+                        stdText: _this.questionRawText
                     };
                     api.post("/api/exam/pretest-analysis", params)
                         .then(res => {
@@ -305,11 +314,15 @@ export default {
                             } else {
                                 console.log("Try uploadRecording() max times!");
                                 console.error(err);
-                                Taro.redirectTo({
-                                    url:
-                                        `/subpackages/exam/audio-test/result?testId=` +
-                                        _this.preparationId
-                                });
+
+                                this.toastText =
+                                    "系统出了点状况，请联系管理员解决噢～";
+                                this.toastShow = true;
+                                setTimeout(() => {
+                                    Taro.redirectTo({
+                                        url: `/pages/index/index`
+                                    });
+                                }, 1500);
                             }
                         });
                 });
@@ -318,10 +331,7 @@ export default {
 
         // 获取测试结果
         getAudioTestResult() {
-            let params = {
-                testId: this.preparationId
-            };
-            api.get("/api/exam/pretest-result", params)
+            api.get("/api/exam/pretest-result")
                 .then(res => {
                     if (res.data.code == 0) {
                         // 分析结果，判断是否需要重做
