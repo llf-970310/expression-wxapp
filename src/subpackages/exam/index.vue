@@ -74,6 +74,20 @@
                     :onClick="nextStep"
                 >{{btnItems[this.stepCurrent]}}</AtButton>
             </view>
+            <view class="btn-feedback" v-if="state != 'prepare'">
+                <view
+                    :class="{'feedback-item' : true, 'active': upActive}"
+                    @tap="onClickFeedbackButton(1)"
+                >
+                    <AtIcon prefixClass='iconfont' value='dianzan' size='25'></AtIcon>
+                </view>
+                <view
+                    :class="{'feedback-item' : true, 'active': downActive}"
+                    @tap="onClickFeedbackButton(2)"
+                >
+                    <AtIcon prefixClass='iconfont' value='cai' size='25'></AtIcon>
+                </view>
+            </view>
         </view>
     </view>
 </template>s
@@ -83,6 +97,7 @@ import "./index.scss";
 import api from "@/util/api.js";
 import Taro from "@tarojs/taro";
 import { uploadSoundToBOS } from "@/util/bos.js";
+import "@/components/iconfont/iconfont.scss";
 
 const stepItems = [
     { title: "阅读要求" },
@@ -143,6 +158,8 @@ export default {
             curQuestionPreparationTime: 0,
             curQuestionAnswerTime: 0,
             isLike: false,
+            upActive: false,
+            downActive: false,
 
             // 重试相关的参数
             retryCount: 0,
@@ -388,6 +405,60 @@ export default {
             } else {
                 this.isLike = true;
                 this.feedback(FeedbackActions.like, this.curQuestionDbId);
+            }
+        },
+
+        onClickFeedbackButton(type) {
+            // up
+            if (type == 1) {
+                if (!this.upActive) {
+                    this.upActive = true;
+                    if (this.downActive) {
+                        this.downActive = false;
+                        this.feedback(
+                            FeedbackActions.downToUp,
+                            this.curQuestionDbId
+                        );
+                        console.log("down2up:", this.curQuestionDbId);
+                    } else {
+                        this.feedback(FeedbackActions.up, this.curQuestionDbId);
+                        console.log("up:", this.curQuestionDbId);
+                    }
+                } else {
+                    this.upActive = false;
+                    this.feedback(
+                        FeedbackActions.cancelUp,
+                        this.curQuestionDbId
+                    );
+                    console.log("up canceled:", this.curQuestionDbId);
+                }
+            }
+            // down
+            else if (type == 2) {
+                if (!this.downActive) {
+                    this.downActive = true;
+                    if (this.upActive) {
+                        this.upActive = false;
+                        this.feedback(
+                            FeedbackActions.upToDown,
+                            this.curQuestionDbId
+                        );
+                        console.log("up2down:", this.curQuestionDbId);
+                    } else {
+                        console.log("down:", this.curQuestionDbId);
+                        this.feedback(
+                            FeedbackActions.down,
+                            this.curQuestionDbId
+                        );
+                    }
+                } else {
+                    this.downActive = false;
+                    this.feedback(
+                        FeedbackActions.cancelDown,
+                        this.curQuestionDbId
+                    );
+                    console.log("down canceled:", this.curQuestionDbId);
+                }
             }
         },
 

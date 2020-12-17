@@ -19,7 +19,7 @@
   }
 
   .btn-start {
-    margin-top: 100px;
+    margin-top: 80px;
     width: 40%;
   }
 
@@ -45,4 +45,32 @@
   border-style: none;
   margin-top: 5rpx;
   margin-right: 55rpx;
+}
+
+.btn-feedback {
+  margin-top: 100rpx;
+  margin-left: 250rpx;
+  display: flex;
+  // justify-content: flex-end;
+
+  .feedback-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    color: #78A4FA;
+    text-align: center;
+    box-shadow: 4px 10px 30px 0 rgba(120, 164, 250, 0.30);
+    border-radius: 50%;
+
+    &:first-child {
+      margin-right: 50rpx;
+    }
+  }
+
+  .active {
+    color: #fff;
+    background: #78A4FA;
+  }
 }
