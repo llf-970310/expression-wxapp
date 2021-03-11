@@ -295,36 +295,36 @@ export default {
                         filePath: _this.uploadUrl,
                         stdText: _this.questionRawText
                     };
-                    api.post("/api/exam/pretest-analysis", params)
-                        .then(res => {
+                    api.post("/api/exam/pretest-analysis", params).then(res => {
+                        if (res.data.code == 0) {
                             console.log("已通知服务器上传成功");
-                            _this.getAudioTestResult();
-                        })
-                        .catch(err => {
-                            if (_this.retryCount < _this.maxRetry) {
-                                _this.reTry(
-                                    ([location, url, localPath, index]) =>
-                                        uploadRecording(
-                                            location,
-                                            url,
-                                            localPath
-                                        ),
-                                    [uploadLocation, uploadUrl, tempFilePath]
-                                );
-                            } else {
-                                console.log("Try uploadRecording() max times!");
-                                console.error(err);
+                            setTimeout(() => {
+                                _this.getAudioTestResult();
+                            }, 1000);
+                        } else if (_this.retryCount < _this.maxRetry) {
+                            _this.reTry(
+                                ([location, url, localPath, index]) =>
+                                    _this.uploadRecording(
+                                        location,
+                                        url,
+                                        localPath
+                                    ),
+                                [uploadLocation, uploadUrl, tempFilePath]
+                            );
+                        } else {
+                            console.log("Try uploadRecording() max times!");
+                            console.error(err);
 
-                                this.toastText =
-                                    "系统出了点状况，请联系管理员解决噢～";
-                                this.toastShow = true;
-                                setTimeout(() => {
-                                    Taro.redirectTo({
-                                        url: `/pages/index/index`
-                                    });
-                                }, 1500);
-                            }
-                        });
+                            this.toastText =
+                                "系统出了点状况，请联系管理员解决噢～";
+                            this.toastShow = true;
+                            setTimeout(() => {
+                                Taro.redirectTo({
+                                    url: `/pages/index/index`
+                                });
+                            }, 1500);
+                        }
+                    });
                 });
             }
         },
