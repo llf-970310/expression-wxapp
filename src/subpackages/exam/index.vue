@@ -79,13 +79,13 @@
                     :class="{'feedback-item' : true, 'active': upActive}"
                     @tap="onClickFeedbackButton(1)"
                 >
-                    <AtIcon prefixClass='iconfont' value='dianzan' size='25'></AtIcon>
+                    <AtIcon prefixClass="iconfont" value="dianzan" size="25"></AtIcon>
                 </view>
                 <view
                     :class="{'feedback-item' : true, 'active': downActive}"
                     @tap="onClickFeedbackButton(2)"
                 >
-                    <AtIcon prefixClass='iconfont' value='cai' size='25'></AtIcon>
+                    <AtIcon prefixClass="iconfont" value="cai" size="25"></AtIcon>
                 </view>
             </view>
         </view>
@@ -189,21 +189,25 @@ export default {
             // endAnswer
             if (this.stepCurrent == 2) {
                 recorderManager.stop();
-                // 处理录音文件
+                // 处理录音文件，延迟1s进行
                 this.dataLoading = true;
-                api.get("/api/exam/" + this.curQuestionIndex + "/upload-url")
-                    .then(res => {
-                        let uploadLocation = res.data.data.fileLocation;
-                        let uploadUrl = res.data.data.url;
-                        this.uploadRecording(
-                            uploadLocation,
-                            uploadUrl,
-                            tempFilePath
-                        );
-                    })
-                    .catch(err => {
-                        console.log("err: ", err);
-                    });
+                setTimeout(() => {
+                    api.get(
+                        "/api/exam/" + this.curQuestionIndex + "/upload-url"
+                    )
+                        .then(res => {
+                            let uploadLocation = res.data.data.fileLocation;
+                            let uploadUrl = res.data.data.url;
+                            this.uploadRecording(
+                                uploadLocation,
+                                uploadUrl,
+                                tempFilePath
+                            );
+                        })
+                        .catch(err => {
+                            console.log("err: ", err);
+                        });
+                }, 1000);
             }
 
             this.stepCurrent = (this.stepCurrent + 1) % 3;

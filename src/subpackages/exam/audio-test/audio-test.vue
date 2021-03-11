@@ -210,30 +210,33 @@ export default {
             // endAnswer
             if (this.stepCurrent == 2) {
                 recorderManager.stop();
-                // 处理录音文件
-                api.get("/api/exam/pretest-wav-url")
-                    .then(res => {
-                        if (res.data.code == 0) {
-                            this.uploadLocation = res.data.data.fileLocation;
-                            this.uploadUrl = res.data.data.url;
-                            this.uploadRecording(
-                                this.uploadLocation,
-                                this.uploadUrl,
-                                tempFilePath
-                            );
-                        } else {
-                            this.toastText = res.data.msg;
-                            this.toastShow = true;
-                            setTimeout(() => {
-                                this.$taro.redirectTo({
-                                    url: `/pages/index/index`
-                                });
-                            }, 1000);
-                        }
-                    })
-                    .catch(err => {
-                        console.log("err: ", err);
-                    });
+                // 处理录音文件，延迟1s进行
+                setTimeout(() => {
+                    api.get("/api/exam/pretest-wav-url")
+                        .then(res => {
+                            if (res.data.code == 0) {
+                                this.uploadLocation =
+                                    res.data.data.fileLocation;
+                                this.uploadUrl = res.data.data.url;
+                                this.uploadRecording(
+                                    this.uploadLocation,
+                                    this.uploadUrl,
+                                    tempFilePath
+                                );
+                            } else {
+                                this.toastText = res.data.msg;
+                                this.toastShow = true;
+                                setTimeout(() => {
+                                    this.$taro.redirectTo({
+                                        url: `/pages/index/index`
+                                    });
+                                }, 1000);
+                            }
+                        })
+                        .catch(err => {
+                            console.log("err: ", err);
+                        });
+                }, 1000);
             }
 
             this.stepCurrent = (this.stepCurrent + 1) % 4;
