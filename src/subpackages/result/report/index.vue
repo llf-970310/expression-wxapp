@@ -259,6 +259,16 @@ export default {
                         });
                     }, 1000);
                 }
+            })
+            // 捕获 500 错误
+            .catch(err => {
+                this.toastText = "报告生成失败，请稍后通过历史查看";
+                this.toastShow = true;
+                setTimeout(() => {
+                    this.$taro.redirectTo({
+                        url: `/subpackages/result/history/index`
+                    });
+                }, 1000);
             });
         },
 
